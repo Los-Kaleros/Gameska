@@ -1,43 +1,54 @@
 import arcade
 
+
+
 #Rozmery + Nazov okna
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 900
 SCREEN_TITLE = "Lidl Mario"
 
-def draw_pozadie():
-    arcade.draw_rectangle_filled(SCREEN_WIDTH /2, SCREEN_HEIGHT * 2/3,
-                                 SCREEN_WIDTH -1, SCREEN_HEIGHT * 3/3, arcade.color.LIGHT_BLUE)
-    arcade.draw_rectangle_filled(SCREEN_WIDTH /2, SCREEN_HEIGHT * 0/5,
-                                 SCREEN_WIDTH -1, SCREEN_HEIGHT * 2/5, arcade.color.DARK_BROWN)
-    
+TILE_SCALING = 0.5
 
-#Vykreslovanie kociek
-def draw_kocky(x, y):
     
-    arcade.draw_rectangle_filled(x, y, 35, 35, arcade.color.YELLOW)
+class MainHra(arcade.Window):
+
+    def __init__(self):
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+
+        self.scene = None
+        self.player_sprite = None 
+        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+
     
-#Jadro hry
+    def setup(self):
+        self.scene = arcade.Scene()
+        
+        self.scene.add_sprite_list("Player")
+        self.scene.add_sprite_list("Walls", use_spatial_hash=True)
+
+        for x in range(0, 1250, 64):
+            wall = arcade.Sprite("./obrazky/zem.png", TILE_SCALING)
+            wall.center_x = x
+            wall.center_y = 32
+            self.scene.add_sprite("Walls", wall)
+
+        coordinate_list = [[512, 96],[256, 96], [768, 96]]
+        for coordinate in coordinate_list:
+            wall = arcade.Sprite("./obrazky/box1.png", TILE_SCALING)
+            wall.position = coordinate
+            self.scene.add_sprite("Walls", wall)
+        
+    def on_draw(self):
+        self.clear()
+        self.scene.draw()
+    
+    
+    
+    
 def main():
-
-    #Otvorenie okna
-    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-
-    #Start renderovania objektov
-    arcade.start_render()
-
-    #Vykreslenie funkcii
-    draw_pozadie()
-    draw_kocky(120, 138)
-    
-
-    #Dokoncenie renderovanie po vykresleni vsetkych funkcii
-    arcade.finish_render()
-
-    #Zabezpeci chod okna pokial ho niekto nevypne
+    window = MainHra()
+    window.setup()
     arcade.run()
-
-
 
 # Spustenie jadra hry
 if __name__ == "__main__":
