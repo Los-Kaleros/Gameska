@@ -25,6 +25,8 @@ class MainHra(arcade.Window):
 
         self.physics_engine = None
 
+        self.camera = None
+
     
     def setup(self):
         self.scene = arcade.Scene()
@@ -38,7 +40,7 @@ class MainHra(arcade.Window):
         self.player_sprite.center_y = 128
         self.scene.add_sprite("Player", self.player_sprite)
 
-        for x in range(0, 1250, 64):
+        for x in range(0, 2000, 64):
             wall = arcade.Sprite("./obrazky/zem.png", TILE_SCALING)
             wall.center_x = x
             wall.center_y = 32
@@ -52,11 +54,13 @@ class MainHra(arcade.Window):
             self.scene.add_sprite("Walls", wall)
 
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, gravity_constant = GRAVITY, walls = self.scene["Walls"])
+        self.camera = arcade.Camera(self.width, self.height)
 
         
     def on_draw(self):
         self.clear()
         self.scene.draw()
+        self.camera.use()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.W:
@@ -78,8 +82,24 @@ class MainHra(arcade.Window):
         elif key == arcade.key.D:
             self.player_sprite.change_x = 0
 
+
+    def center_camera_to_player(self):
+        screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width /2)
+        screen_center_y = self.player_sprite.center_y - (self.camera.viewport_height /2)
+
+        if screen_center_x < 0:
+            screen_center_x = 0
+        if screen_center_y < 0:
+            screen_center_y = 0
+        player_centered = screen_center_x, screen_center_y
+        self.camera.move_to(player_centered)
+    
+    
+    
     def on_update(self, delta_time):
         self.physics_engine.update()
+
+        self.center_camera_to_player()
 
     
     
