@@ -5,6 +5,13 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Lidl Mario"
 
+def draw_pozadie():
+    arcade.draw_rectangle_filled(SCREEN_WIDTH /2, SCREEN_HEIGHT * 2/3,
+                                 SCREEN_WIDTH -1, SCREEN_HEIGHT * 3/3, arcade.color.LIGHT_BLUE)
+    arcade.draw_rectangle_filled(SCREEN_WIDTH /2, SCREEN_HEIGHT * 0/5,
+                                 SCREEN_WIDTH -1, SCREEN_HEIGHT * 2/5, arcade.color.DARK_BROWN)
+    
+
 #Vykreslovanie kociek
 def draw_kocky(x, y):
     
@@ -20,13 +27,14 @@ def main():
     arcade.start_render()
 
     #Vykreslenie funkcii
-    draw_kocky(100, 100)
+    draw_pozadie()
+    draw_kocky(120, 138)
     
 
     #Dokoncenie renderovanie po vykresleni vsetkych funkcii
     arcade.finish_render()
 
-    #Zabezpeci chod okna pokial ho niekto nevipne 
+    #Zabezpeci chod okna pokial ho niekto nevypne
     arcade.run()
 
 
