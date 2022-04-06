@@ -2,14 +2,14 @@ import arcade
 
 
 #Rozmery + Nazov okna
-SCREEN_WIDTH = 1500
-SCREEN_HEIGHT = 900
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 800
 SCREEN_TITLE = "Lidl Mario"
 
-CHARACTER_SCALING = 0.30
-TILE_SCALING = 0.50
+CHARACTER_SCALING = 0.50
+TILE_SCALING = 2.00
 
-PLAYER_MOVEMENT_SPEED = 5
+PLAYER_MOVEMENT_SPEED = 8
 GRAVITY = 1
 PLAYER_JUMP_SPEED = 20
 
@@ -29,18 +29,20 @@ class MainHra(arcade.Window):
 
         self.camera = None
 
-        self.jump_sound = arcade.load_sound("./zvuky/zvuk_skok.mp3")
+        self.jump_sound = arcade.load_sound("./zvuky/jump1.wav")
         
         
     
     def setup(self):
         
-        map_name = "./mapa/map_2.tmj"
+        map_name = "./mapa/map4.tmj"
 
         layer_options = {
             "Platforms": {
                 "use_spatial_hash": True,
             },
+            
+
         }
 
         self.tile_map = arcade.load_tilemap(map_name, TILE_SCALING, layer_options)
