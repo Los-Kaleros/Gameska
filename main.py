@@ -1,3 +1,4 @@
+from tracemalloc import stop
 import arcade
 
 
@@ -27,6 +28,29 @@ LAYER_NAME_BACKGROUND = "Background"
 LAYEN_NAME_DONT_TOUCH = "Don't Touch"
 
 
+
+
+class MenuView(arcade.View):
+    
+
+    def on_show(self):
+        
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+
+    def on_draw(self):
+        
+        self.clear()
+        arcade.draw_text("Lidl Mario", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=30, anchor_x="center")
+        arcade.draw_text("(Klikni pre spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3,
+                         arcade.color.BLACK, font_size=15, anchor_x="center")
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        
+        
+        game_view = MyGame()
+        game_view.setup()
+        self.window.show_view(game_view)
 
     
 class MyGame(arcade.Window):
@@ -165,9 +189,11 @@ class MyGame(arcade.Window):
     
     
 def main(): #definicia hlavneho programu(spustenie definicii okna, nacitanie mapy, nacitanie postavicky, nacitanie zvukov, spustenie samotnej hry)
-    window = MyGame()
-    window.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Lidl Mario-MENU")
+    menu_view = MenuView()
+    window.show_view(menu_view)
     arcade.run()
+    
 
 
 if __name__ == "__main__": #vyvolanie main definicie vdaka ktorej spustime celu hru
