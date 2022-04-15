@@ -25,6 +25,7 @@ LAYER_NAME_PLATFORMS = "Platforms"
 LAYER_NAME_FOREGROUND = "Foreground"
 LAYER_NAME_BACKGROUND = "Background"
 LAYEN_NAME_DONT_TOUCH = "Don't Touch"
+LAYER_NAME_LADDERS = "Ladders"
 
 
 
@@ -107,7 +108,9 @@ class MyGame(arcade.Window):
             LAYER_NAME_PLATFORMS: {
                 "use_spatial_hash": True,
             },
-            
+            LAYER_NAME_LADDERS: {
+                "use_spatial_hash": True,
+            }
             
 
         }
@@ -132,10 +135,11 @@ class MyGame(arcade.Window):
 
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite, 
-            gravity_constant = GRAVITY, 
+            gravity_constant = GRAVITY,
+            ladders = self.scene[LAYER_NAME_LADDERS], 
             walls=self.scene[LAYER_NAME_PLATFORMS],
             
-        ) #vytvorenie enginu pre fyziku
+        ) #vytvorenie fyzickeho enginu
 
 
         self.camera = arcade.Camera(self.width, self.height) #vytvorenie kamery
@@ -150,7 +154,9 @@ class MyGame(arcade.Window):
 
     def on_key_press(self, key, modifiers): #definicia co sa vykonava pri stlaceni klaves
         if key == arcade.key.W:
-            if self.physics_engine.can_jump():
+            if self.physics_engine.is_on_ladder():
+                self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+            elif self.physics_engine.can_jump():
                 self.player_sprite.change_y = PLAYER_JUMP_SPEED
                 arcade.play_sound(self.jump_sound)
 
@@ -160,10 +166,13 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
 
     def on_key_release(self, key, modifiers): #definicia co sa vykonava pri uvolneni klaves
+        
         if key == arcade.key.W:
-            self.player_sprite.change_y = 0
+            if self.physics_engine.is_on_ladder():
+                self.player_sprite.change_y = 0
         elif key == arcade.key.S:
-            self.player_sprite.change_y = 0
+            if self.physics_engine.is_on_ladder():
+                self.player_sprite.change_y = 0
         elif key == arcade.key.A:
             self.player_sprite.change_x = 0
         elif key == arcade.key.D:
