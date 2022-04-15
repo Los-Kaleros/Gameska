@@ -1,4 +1,3 @@
-from tracemalloc import stop
 import arcade
 
 
@@ -29,37 +28,56 @@ LAYEN_NAME_DONT_TOUCH = "Don't Touch"
 
 
 
-
+#klasa kde sa nastavuje menu okno
 class MenuView(arcade.View):
     
-
-    def on_show(self):
+    def on_show(self): #funkcia ktora sa spusti pri zobrazeni okna
         
-        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY) #nastavi farbu pozadia na tmavom modry
 
-    def on_draw(self):
+    def on_draw(self): #funkcia ktora vykresli nami zadane veci uvedene nizsie
         
-        self.clear()
+        self.clear() #vycisti okno pred tym ako nan nieco nakresli
+        
         arcade.draw_text("Lidl Mario", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=30, anchor_x="center")
+                         arcade.color.BLACK, font_size=30, anchor_x="center")   #nakresli text Lidl Mario s nastavenymi parametrami
+        
+        arcade.draw_text("(Klikni pre pokračovanie)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3,
+                         arcade.color.BLACK, font_size=15, anchor_x="center")   #nakresli text (Klikni pre pokračovanie) s nastavenymi parametrami
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers): #funkcia ktora sa spusti pri kliknuti na myš
+        
+        instruction = InstructionView() #zvolime ze okno InstructionView bude pod premennou instruction
+        self.window.show_view(instruction) #zobrazime okno InstructionView
+
+#klasa kde sa nastavuje instruktazne okno   
+class InstructionView(arcade.View): 
+
+    def on_show(self): #funkcia ktora sa spusti pri zobrazeni okna
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY) #nastavi farbu pozadia na tmavom modry
+
+    def on_draw(self): #funkcia ktora vykresli nami zadane veci uvedene nizsie
+        self.clear() #vycisti okno pred tym ako nan nieco nakresli
+        arcade.draw_text("Inštrukcie:", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=30, anchor_x="center") #nakresli text Inštrukcie s nastavenymi parametrami
+        arcade.draw_text("Ovládanie: W, A, D", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5,
+                         arcade.color.BLACK, font_size=15, anchor_x="center") #nakresli text Ovládanie s nastavenymi parametrami
         arcade.draw_text("(Klikni pre spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3,
-                         arcade.color.BLACK, font_size=15, anchor_x="center")
-
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
+                         arcade.color.BLACK, font_size=15, anchor_x="center") #nakresli text (Klikni pre spustenie hry) s nastavenymi parametrami
         
-        
-        game_view = MyGame()
-        game_view.setup()
-        self.window.show_view(game_view)
+    def on_mouse_press(self, _x, _y, button, _modifiers): #funkcia ktora sa spusti pri kliknuti na myš
+        game_view = MyGame() #zvolime ze okno MyGame bude pod premennou game_view
+        game_view.setup() #spustime funkciu setup() v MyGame
+        self.window.show_view(game_view) #zobrazime okno MyGame
 
-    
+#klasa kde sa nastavuje jadro hry
 class MyGame(arcade.Window):
 
     def __init__(self):  #definicia co sa deje ako prve pri spusteni
         #vyvola rodicovsku klasu a nastavi okno
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE) 
-        #nacitanie mapy
-        self.tile_map = None
+        
+        self.tile_map = None 
         
         self.scene = None
         
@@ -181,7 +199,7 @@ class MyGame(arcade.Window):
             self.setup()
 
         
-        self.center_camera_to_player()
+        self.center_camera_to_player() #aktualizacia kamery tak aby bola vzdy centrovana na hraca
 
     
     
