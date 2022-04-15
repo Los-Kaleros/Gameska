@@ -15,7 +15,7 @@ GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING #velkost jednej kocky v pixel
 PLAYER_MOVEMENT_SPEED = 7 #rychlost pohybu postavicky
 GRAVITY = 1.5 #sila gravitacie pouzita v hre 
 PLAYER_JUMP_SPEED = 30 #rychlost skoku postavicky
-
+PLAYER_MOVEMENT_SPEED_ZAPOR = -7
 #pozicia postavicky
 PLAYER_START_X = 64
 PLAYER_START_Y = 225
@@ -61,7 +61,7 @@ class InstructionView(arcade.View):
         self.clear() #vycisti okno pred tym ako nan nieco nakresli
         arcade.draw_text("Inštrukcie:", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                          arcade.color.BLACK, font_size=30, anchor_x="center") #nakresli text Inštrukcie s nastavenymi parametrami
-        arcade.draw_text("Ovládanie: W, A, D", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5,
+        arcade.draw_text("Ovládanie: W, A, D, S", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5,
                          arcade.color.BLACK, font_size=15, anchor_x="center") #nakresli text Ovládanie s nastavenymi parametrami
         arcade.draw_text("(Klikni pre spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3,
                          arcade.color.BLACK, font_size=15, anchor_x="center") #nakresli text (Klikni pre spustenie hry) s nastavenymi parametrami
@@ -153,13 +153,15 @@ class MyGame(arcade.Window):
         
 
     def on_key_press(self, key, modifiers): #definicia co sa vykonava pri stlaceni klaves
-        if key == arcade.key.W:
-            if self.physics_engine.is_on_ladder():
-                self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
-            elif self.physics_engine.can_jump():
-                self.player_sprite.change_y = PLAYER_JUMP_SPEED
-                arcade.play_sound(self.jump_sound)
-
+        if key == arcade.key.W: #ak sa stlaci W tak:
+            if self.physics_engine.is_on_ladder(): #ak je postavicka na rebriku tak:
+                self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED #zmena pozicie postavicky v osi y na velkost PLAYER_MOVEMENT_SPEED
+            elif self.physics_engine.can_jump(): #ak je mozne skocit tak:
+                self.player_sprite.change_y = PLAYER_JUMP_SPEED #zmena pozicie postavicky v osi y na velkost PLAYER_JUMP_SPEED
+                arcade.play_sound(self.jump_sound) #spusti zvuk skoku
+        elif key == arcade.key.S: #ak sa stlaci S tak:
+            if self.physics_engine.is_on_ladder(): #ak je postavicka na rebriku tak:
+                self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED #zmena pozicie postavicky v osi y na velkost -PLAYER_MOVEMENT_SPEED
         elif key == arcade.key.A:
             self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
         elif key == arcade.key.D:
@@ -167,12 +169,12 @@ class MyGame(arcade.Window):
 
     def on_key_release(self, key, modifiers): #definicia co sa vykonava pri uvolneni klaves
         
-        if key == arcade.key.W:
-            if self.physics_engine.is_on_ladder():
-                self.player_sprite.change_y = 0
-        elif key == arcade.key.S:
-            if self.physics_engine.is_on_ladder():
-                self.player_sprite.change_y = 0
+        if key == arcade.key.W: #ak sa pusti W tak:
+            if self.physics_engine.is_on_ladder(): #ak je postavicka na rebriku tak:
+                self.player_sprite.change_y = 0 #zmena pozicie postavicky v osi y na velkost 0 (zastavi sa na rebriku)
+        elif key == arcade.key.S: #ak sa pusti S tak:
+            if self.physics_engine.is_on_ladder(): #ak je postavicka na rebriku tak:
+                self.player_sprite.change_y = 0 #zmena pozicie postavicky v osi y na velkost 0 (zastavi sa na rebriku)
         elif key == arcade.key.A:
             self.player_sprite.change_x = 0
         elif key == arcade.key.D:
