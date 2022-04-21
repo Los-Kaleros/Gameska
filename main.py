@@ -8,7 +8,7 @@ SCREEN_TITLE = "Honey Run" #nazov okna
 
 CHARACTER_SCALING = 1.25 #scaling postavicky opriti velkosti fotky z ktore je
 TILE_SCALING = 2.00 #scaling kociek pouzitych v hre -//-
-SPRITE_PIXEL_SIZE = 128
+SPRITE_PIXEL_SIZE = 32
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING #velkost jednej kocky v pixeloch
 COIN_SCALING = TILE_SCALING
 
@@ -90,8 +90,12 @@ class MyGame(arcade.Window):
         
         self.scene = None
         
+        self.background = None
+
         self.player_sprite = None 
         
+        self.coin_hit_list = None
+
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
         
         #nacitanie enginu 
@@ -120,12 +124,15 @@ class MyGame(arcade.Window):
         
         #level
         self.level = 1
+
+        
         
         
         
     
     def setup(self): #definicia co sa deje ako druhe pri spusteni ()
     
+        
         map_name = f"./mapa/map5_level_{self.level}.tmj" #vyber zdroju mapy
         #specificke nastavenia pre nase mapy
         layer_options = {
@@ -136,16 +143,20 @@ class MyGame(arcade.Window):
                 "use_spatial_hash": True,
             },
             LAYER_NAME_COINS: {
-                "use_spatial_hash": True,
+                "use_spatial_hash": True, 
             },
             
 
         }
 
         self.tile_map = arcade.load_tilemap(map_name, TILE_SCALING, layer_options) #nacitanie mapy
+        
         self.scene = arcade.Scene.from_tilemap(self.tile_map) #vytvorenie sceny z mapy
                 
         self.gui_camera = arcade.Camera(self.width, self.height)
+
+        self.background = arcade.load_texture("./obrazky/Background.png")
+
 
         # Keep track of the score
         self.score = 0
@@ -154,15 +165,13 @@ class MyGame(arcade.Window):
         
 
         image_source = "./obrazky/Medved.png" #zdroj obrazku postavicky
-        self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING) #vykreslenie postavicky podla zadaných parametrov
+        self.player_sprite = arcade.Sprite(image_source,CHARACTER_SCALING, hit_box_algorithm = None) #vykreslenie postavicky podla zadaných parametrov
         self.player_sprite.center_x = 64 #nastavenie pozicie postavicky na stred mapy
         self.player_sprite.center_y = 128 #nastavenie pozicie postavicky na stred mapy
         self.scene.add_sprite("Player", self.player_sprite) #pridanie postavicky do sceny
 
-        self.end_of_map = self.tile_map.width * GRID_PIXEL_SIZE #urcenie kde sa nachadza koniec mapy
+        self.end_of_map = self.tile_map.width * GRID_PIXEL_SIZE - 500 #urcenie kde sa nachadza koniec mapy
 
-        if self.tile_map.background_color: #ak je zadane pozadie mapy tak ho nastavime
-            arcade.set_background_color(self.tile_map.background_color)
 
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite, 
@@ -177,10 +186,12 @@ class MyGame(arcade.Window):
     
     def on_draw(self): #definicia ktora vykresluje sceny, kameru atd
         self.clear() #vycisti okno pred tym ako nan nieco nakresli
+        
+        
         self.scene.draw() #vykresli scenu
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
-
+        
         # Draw our score on the screen, scrolling it with the viewport
         score_text = f"Medov: {self.score}"
         arcade.draw_text(
@@ -252,12 +263,12 @@ class MyGame(arcade.Window):
             self.setup() #znovu nastavenie hry
         
         coin_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.scene["Coins"]
+           self.player_sprite, 
+           self.scene["Coins"],
+           
         )
             
         
-
-
         # Loop through each coin we hit (if any) and remove it
         for coin in coin_hit_list:
             # Remove the coin
