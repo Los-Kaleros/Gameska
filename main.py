@@ -1,5 +1,6 @@
 import arcade
 import arcade.gui
+import os
 
 #konštanty
 SCREEN_WIDTH = 1000 #sirka okna
@@ -31,7 +32,7 @@ LAYER_NAME_LADDERS = "Ladders"
 LAYER_NAME_COINS = "Coins"
 LAYER_NAME_ENEMIES = "Enemies"
 
-
+MUSIC_VOLUME = 1.5
 
 #klasa kde sa nastavuje menu okno
 class MenuView(arcade.View):
@@ -78,13 +79,15 @@ class InstructionView(arcade.View):
         self.window.show_view(game_view) #zobrazime okno MyGame
 
 
-
 #klasa kde sa nastavuje jadro hry
-class MyGame(arcade.Window):
+class MyGame(arcade.View):
 
     def __init__(self):  #definicia co sa deje ako prve pri spusteni
         #vyvola rodicovsku klasu a nastavi okno
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE) 
+        super().__init__() 
+        
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(file_path)
         
         self.tile_map = None 
         
@@ -118,7 +121,14 @@ class MyGame(arcade.Window):
         
         #nacitanie zvuku ktory sa pouzije pri prehre
         self.game_over_sound = arcade.load_sound("./zvuky/game_over.wav")
+
+        self.music_list = []
+
+        self.music = None
         
+        self.background_music = arcade.load_sound("./zvuky/music.wav")
+
+        self.current_player = None
         #nastevnie kde sa konci mapa aby sme vedeli kde je koniec
         self.end_of_map = 0
         
@@ -127,11 +137,19 @@ class MyGame(arcade.Window):
 
         
         
+    def play_song(self):
+        print(f"Playing {self.music_list[self.current_song_index]}")
+        self.music = arcade.Sound(self.music_list[self.current_song_index], streaming=True)
+        self.current_player = self.music.play(MUSIC_VOLUME)
         
+        
+              
         
     
     def setup(self): #definicia co sa deje ako druhe pri spusteni ()
-    
+        
+        self.camera = arcade.Camera(self.window.width, self.window.height)
+        self.gui_camera = arcade.Camera(self.window.width, self.window.height)
         
         map_name = f"./mapa/map5_level_{self.level}.tmj" #vyber zdroju mapy
         #specificke nastavenia pre nase mapy
@@ -152,8 +170,6 @@ class MyGame(arcade.Window):
         self.tile_map = arcade.load_tilemap(map_name, TILE_SCALING, layer_options) #nacitanie mapy
         
         self.scene = arcade.Scene.from_tilemap(self.tile_map) #vytvorenie sceny z mapy
-                
-        self.gui_camera = arcade.Camera(self.width, self.height)
 
         self.background = arcade.load_texture("./obrazky/Background.png")
 
@@ -164,7 +180,7 @@ class MyGame(arcade.Window):
         self.scene.add_sprite_list_after("Player", LAYER_NAME_FOREGROUND) #vytvorenie listu pre nasu postavicku 
         
 
-        image_source = "./obrazky/Medved.png" #zdroj obrazku postavicky
+        image_source = "./obrazky/Medved2.png" #zdroj obrazku postavicky
         self.player_sprite = arcade.Sprite(image_source,CHARACTER_SCALING, hit_box_algorithm = None) #vykreslenie postavicky podla zadaných parametrov
         self.player_sprite.center_x = 64 #nastavenie pozicie postavicky na stred mapy
         self.player_sprite.center_y = 128 #nastavenie pozicie postavicky na stred mapy
@@ -180,8 +196,9 @@ class MyGame(arcade.Window):
             walls=self.scene[LAYER_NAME_PLATFORMS],
             
         ) #vytvorenie fyzickeho enginu
-
-        self.camera = arcade.Camera(self.width, self.height) #vytvorenie kamery s nastavenim rozmerov
+        self.music_list = ["./zvuky/music.wav"]
+        self.current_song_index = 0
+        self.play_song()
 
     
     def on_draw(self): #definicia ktora vykresluje sceny, kameru atd
@@ -234,7 +251,8 @@ class MyGame(arcade.Window):
         elif key == arcade.key.D:
             self.player_sprite.change_x = 0
 
-
+    
+    
     def center_camera_to_player(self): #definicia v ktorej sa kamera nastavi na poziciu postavicky
         screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width /2) #urcenie stredu okna na osi x
         screen_center_y = self.player_sprite.center_y - (self.camera.viewport_height /2) #urcenie stredu okna na osi y 
@@ -252,10 +270,10 @@ class MyGame(arcade.Window):
         self.physics_engine.update() #aktualizacia fyzickeho enginu
         
         if self.player_sprite.center_y < -100: #ak hrac spadol z mapy tak:
-            self.player_sprite.center_x = PLAYER_START_X #nastavenie pozicie postavicky na poziciu zadanej v konfiguracnom subore
-            self.player_sprite.center_y = PLAYER_START_Y #nastavenie pozicie postavicky na poziciu zadanej v konfiguracnom subore
-
-            arcade.play_sound(self.game_over_sound) #spusti zvuk prehra
+            game_over_view = GameOverView()
+            arcade.play_sound(self.game_over_sound), #spusti zvuk prehra
+            self.window.show_view(game_over_view) 
+            
         
         #co sa stane ak hrac skonci na konci mapy
         if self.player_sprite.center_x >= self.end_of_map: #ak sa postavicka nachadza na konci mapy tak:	 
@@ -281,13 +299,30 @@ class MyGame(arcade.Window):
         
         self.center_camera_to_player() #aktualizacia kamery tak aby bola vzdy centrovana na hraca
 
+class GameOverView(arcade.View):
+
+    def on_show(self):
+        
+        arcade.set_background_color(arcade.color.CORNFLOWER_BLUE)
+
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Zgenel si", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                          arcade.color.GREEN, 30,anchor_x="center",font_name="Kenney Mini Square", bold = True)
+        arcade.draw_text("Medvedik z tebe smutni", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.10,
+                         arcade.color.GREEN, 20,anchor_x="center",font_name="Kenney Mini Square") #nakresli text Ovládanie s nastavenymi parametrami
     
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = MyGame()
+        game_view.setup()
+        self.window.show_view(game_view)
     
     
     
     
 def main(): #definicia hlavneho programu(spustenie definicii okna, nacitanie mapy, nacitanie postavicky, nacitanie zvukov, spustenie samotnej hry)
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Lidl Mario-MENU")
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Honey Run")
     menu_view = MenuView()
     window.show_view(menu_view)
     arcade.run()
