@@ -32,7 +32,7 @@ LAYER_NAME_LADDERS = "Ladders"
 LAYER_NAME_COINS = "Coins"
 LAYER_NAME_ENEMIES = "Enemies"
 
-MUSIC_VOLUME = 0.25
+MUSIC_VOLUME = 2
 
 #klasa kde sa nastavuje menu okno
 class MenuView(arcade.View):
