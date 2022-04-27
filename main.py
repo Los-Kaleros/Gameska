@@ -32,7 +32,7 @@ LAYER_NAME_LADDERS = "Ladders"
 LAYER_NAME_COINS = "Coins"
 LAYER_NAME_ENEMIES = "Enemies"
 
-MUSIC_VOLUME = 1.5
+MUSIC_VOLUME = 0.25
 
 #klasa kde sa nastavuje menu okno
 class MenuView(arcade.View):
@@ -57,6 +57,8 @@ class MenuView(arcade.View):
         self.window.show_view(instruction) #zobrazime okno InstructionView
         self.window.set_window(instruction) 
 
+
+
 #klasa kde sa nastavuje instruktazne okno   
 class InstructionView(arcade.View): 
 
@@ -72,11 +74,11 @@ class InstructionView(arcade.View):
         arcade.draw_text("(Klikni pre spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3,
                          arcade.color.GREEN, font_size=15, anchor_x="center",font_name="Kenney Mini Square") #nakresli text (Klikni pre spustenie hry) s nastavenymi parametrami
     
-
     def on_mouse_press(self, _x, _y, button, _modifiers): #funkcia ktora sa spusti pri kliknuti na myš
         game_view = MyGame() #zvolime ze okno MyGame bude pod premennou game_view
         game_view.setup() #spustime funkciu setup() v MyGame
         self.window.show_view(game_view) #zobrazime okno MyGame
+
 
 
 #klasa kde sa nastavuje jadro hry
@@ -135,17 +137,10 @@ class MyGame(arcade.View):
         #level
         self.level = 1
 
-        
-        
     def play_song(self):
-        print(f"Playing {self.music_list[self.current_song_index]}")
         self.music = arcade.Sound(self.music_list[self.current_song_index], streaming=True)
         self.current_player = self.music.play(MUSIC_VOLUME)
         
-        
-              
-        
-    
     def setup(self): #definicia co sa deje ako druhe pri spusteni ()
         
         self.camera = arcade.Camera(self.window.width, self.window.height)
@@ -173,13 +168,11 @@ class MyGame(arcade.View):
 
         self.background = arcade.load_texture("./obrazky/Background.png")
 
-
         # Keep track of the score
-        self.score = 0
+        self.score = 0 + self.score
 
         self.scene.add_sprite_list_after("Player", LAYER_NAME_FOREGROUND) #vytvorenie listu pre nasu postavicku 
         
-
         image_source = "./obrazky/Medved2.png" #zdroj obrazku postavicky
         self.player_sprite = arcade.Sprite(image_source,CHARACTER_SCALING, hit_box_algorithm = None) #vykreslenie postavicky podla zadaných parametrov
         self.player_sprite.center_x = 64 #nastavenie pozicie postavicky na stred mapy
@@ -187,7 +180,6 @@ class MyGame(arcade.View):
         self.scene.add_sprite("Player", self.player_sprite) #pridanie postavicky do sceny
 
         self.end_of_map = self.tile_map.width * GRID_PIXEL_SIZE - 500 #urcenie kde sa nachadza koniec mapy
-
 
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite, 
@@ -199,11 +191,9 @@ class MyGame(arcade.View):
         self.music_list = ["./zvuky/music.wav"]
         self.current_song_index = 0
         self.play_song()
-
     
     def on_draw(self): #definicia ktora vykresluje sceny, kameru atd
         self.clear() #vycisti okno pred tym ako nan nieco nakresli
-        
         
         self.scene.draw() #vykresli scenu
         # Activate the GUI camera before drawing GUI elements
@@ -220,9 +210,6 @@ class MyGame(arcade.View):
         )
         self.camera.use() #pouzije kameru
         
-        #self.player_sprite.draw_hit_box(arcade.color.RED, 3) #vykresli hitbox postavicky
-        
-
     def on_key_press(self, key, modifiers): #definicia co sa vykonava pri stlaceni klaves
         if key == arcade.key.W: #ak sa stlaci W tak:
             if self.physics_engine.is_on_ladder(): #ak je postavicka na rebriku tak:
@@ -251,8 +238,6 @@ class MyGame(arcade.View):
         elif key == arcade.key.D:
             self.player_sprite.change_x = 0
 
-    
-    
     def center_camera_to_player(self): #definicia v ktorej sa kamera nastavi na poziciu postavicky
         screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width /2) #urcenie stredu okna na osi x
         screen_center_y = self.player_sprite.center_y - (self.camera.viewport_height /2) #urcenie stredu okna na osi y 
@@ -264,8 +249,6 @@ class MyGame(arcade.View):
         player_centered = screen_center_x, screen_center_y 
         self.camera.move_to(player_centered) #nastavenie kamery na poziciu postavicky
     
-
-
     def on_update(self, delta_time): #definicia co sa vykonava pri aktualizacii hry (aktualizacia pohybu postavicky, kamera, kontrola kolizii, ci hrac nespadol z mapy, atd)
         self.physics_engine.update() #aktualizacia fyzickeho enginu
         
@@ -274,7 +257,6 @@ class MyGame(arcade.View):
             arcade.play_sound(self.game_over_sound), #spusti zvuk prehra
             self.window.show_view(game_over_view) 
             
-        
         #co sa stane ak hrac skonci na konci mapy
         if self.player_sprite.center_x >= self.end_of_map: #ak sa postavicka nachadza na konci mapy tak:	 
             self.level += 1 #zvysenie levelu o 1
@@ -285,9 +267,8 @@ class MyGame(arcade.View):
            self.scene["Coins"],
            
         )
-            
-        
-        # Loop through each coin we hit (if any) and remove it
+             
+        #cyklus ktori opakovane zistuje ci sme narazili na mincu a ak ano tak ju zozbiera, odstrani zo sprite listu kolizii, prehra zvuka prida skore
         for coin in coin_hit_list:
             # Remove the coin
             coin.remove_from_sprite_lists()
@@ -299,12 +280,13 @@ class MyGame(arcade.View):
         
         self.center_camera_to_player() #aktualizacia kamery tak aby bola vzdy centrovana na hraca
 
+
+
 class GameOverView(arcade.View):
 
     def on_show(self):
         
         arcade.set_background_color(arcade.color.CORNFLOWER_BLUE)
-
 
     def on_draw(self):
         self.clear()
@@ -318,16 +300,11 @@ class GameOverView(arcade.View):
         game_view.setup()
         self.window.show_view(game_view)
     
-    
-    
-    
-def main(): #definicia hlavneho programu(spustenie definicii okna, nacitanie mapy, nacitanie postavicky, nacitanie zvukov, spustenie samotnej hry)
+def main(): #definicia hlavneho programu, nacitanie pohladu a spustenie hry
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Honey Run")
     menu_view = MenuView()
     window.show_view(menu_view)
     arcade.run()
-    
 
-
-if __name__ == "__main__": #vyvolanie main definicie vdaka ktorej spustime celu hru
+if __name__ == "__main__": #vyvolanie main funkcie vdaka ktorej spustime celu hru
     main()
