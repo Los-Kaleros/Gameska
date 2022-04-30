@@ -17,6 +17,5 @@ class MyWindow(arcade.Window):
          
     def on_draw(self):
         self.clear()
-        
 window = MyWindow()
 arcade.run()

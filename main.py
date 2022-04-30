@@ -39,6 +39,8 @@ LAYER_NAME_ENEMIES = "Enemies"
 
 MUSIC_VOLUME = 0.25
 
+SCORE = 0
+
 #klasa kde sa nastavuje menu okno
 class MenuView(arcade.View):
     
@@ -116,8 +118,6 @@ class MyGame(arcade.View):
         
         self.gui_camera = None
 
-        self.score = 0
-
         self.points = 1
 
         #nacitanie zvuku ktory sa pouzije pri zozbierani medu
@@ -175,8 +175,6 @@ class MyGame(arcade.View):
 
         self.background = arcade.load_texture("./obrazky/Background.png")
 
-        # Keep track of the score
-        self.score = 0 + self.score
 
         self.scene.add_sprite_list_after("Player", LAYER_NAME_FOREGROUND) #vytvorenie listu pre nasu postavicku 
         
@@ -207,7 +205,7 @@ class MyGame(arcade.View):
         self.gui_camera.use()
         
         # Draw our score on the screen, scrolling it with the viewport
-        score_text = f"Medov: {self.score}"
+        score_text = f"Medov: {SCORE}"
         arcade.draw_text(
             score_text,
             10,
@@ -289,7 +287,8 @@ class MyGame(arcade.View):
             # Play a sound
             arcade.play_sound(self.coin_collect_sound)
             # Add one to the score
-            self.score += 1
+            global SCORE
+            SCORE += 1
         
         
         self.center_camera_to_player() #aktualizacia kamery tak aby bola vzdy centrovana na hraca
@@ -306,6 +305,7 @@ class GameOverView(arcade.View):
         self.gui_camera = arcade.Camera(self.window.width, self.window.height)
         self.gui_camera.use()
         
+
         arcade.draw_text("Prehral si!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                           arcade.color.GREEN, 50,anchor_x = "center",font_name="Kenney Mini Square", bold = True)
         arcade.draw_text("(Klikni pre opetovne spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.50,
@@ -327,8 +327,10 @@ class WinView(arcade.View):
         
         arcade.draw_text("Vyhral si!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                           arcade.color.GREEN, 50,anchor_x = "center",font_name="Kenney Mini Square", bold = True)
+        arcade.draw_text(f"Score:{SCORE}", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.20,
+                         arcade.color.GREEN, 20,anchor_x= "center",font_name="Kenney Mini Square")
         arcade.draw_text("(Klikni pre zatvorenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.50,
-                         arcade.color.GREEN, 30,anchor_x= "center",font_name="Kenney Mini Square") #nakresli text Ovládanie s nastavenymi parametrami
+                         arcade.color.GREEN, 20,anchor_x= "center",font_name="Kenney Mini Square") #nakresli text Ovládanie s nastavenymi parametrami
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         arcade.exit()
 
