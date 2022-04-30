@@ -64,8 +64,6 @@ class MenuView(arcade.View):
         self.window.show_view(instruction) #zobrazime okno InstructionView
         self.window.set_window(instruction) 
 
-
-
 #klasa kde sa nastavuje instruktazne okno   
 class InstructionView(arcade.View): 
 
@@ -85,8 +83,6 @@ class InstructionView(arcade.View):
         game_view = MyGame() #zvolime ze okno MyGame bude pod premennou game_view
         game_view.setup() #spustime funkciu setup() v MyGame
         self.window.show_view(game_view) #zobrazime okno MyGame
-
-
 
 #klasa kde sa nastavuje jadro hry
 class MyGame(arcade.View):
@@ -174,7 +170,6 @@ class MyGame(arcade.View):
         self.scene = arcade.Scene.from_tilemap(self.tile_map) #vytvorenie sceny z mapy
 
         self.background = arcade.load_texture("./obrazky/Background.png")
-
 
         self.scene.add_sprite_list_after("Player", LAYER_NAME_FOREGROUND) #vytvorenie listu pre nasu postavicku 
         
@@ -265,14 +260,16 @@ class MyGame(arcade.View):
             
         #co sa stane ak hrac skonci na konci mapy
         if self.player_sprite.center_x >= self.end_of_map: #ak sa postavicka nachadza na konci mapy tak:	 
+            arcade.stop_sound(self.current_player)
             self.level += 1 #zvysenie levelu o 1
             self.setup() #znovu nastavenie hry
+            
         
         if self.player_sprite.center_x >= 15000: #ak sa postavicka nachadza na konci mapy2 (cize na osi x je to 19000) tak:
             win_view = WinView()
             arcade.play_sound(self.win_sound), #spusti zvuk vyhra
             self.window.show_view(win_view) #zobrazime okno vyhry
-            arcade.stop_sound(self.current_player) #zastavi hudbu
+            arcade.stop_sound(self.current_player)
 
         coin_hit_list = arcade.check_for_collision_with_list(
            self.player_sprite, 
@@ -308,6 +305,8 @@ class GameOverView(arcade.View):
 
         arcade.draw_text("Prehral si!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                           arcade.color.GREEN, 50,anchor_x = "center",font_name="Kenney Mini Square", bold = True)
+        arcade.draw_text(f"Score:{SCORE}", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.20,
+                         arcade.color.GREEN, 20,anchor_x= "center",font_name="Kenney Mini Square")
         arcade.draw_text("(Klikni pre opetovne spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.50,
                          arcade.color.GREEN, 30,anchor_x= "center",font_name="Kenney Mini Square") #nakresli text Ovládanie s nastavenymi parametrami
     
@@ -320,6 +319,7 @@ class WinView(arcade.View):
 
     def on_show(self):
         arcade.set_background_color(arcade.color.CORNFLOWER_BLUE)
+    
     def on_draw(self):
         self.clear()
         self.gui_camera = arcade.Camera(self.window.width, self.window.height)
@@ -331,9 +331,9 @@ class WinView(arcade.View):
                          arcade.color.GREEN, 20,anchor_x= "center",font_name="Kenney Mini Square")
         arcade.draw_text("(Klikni pre zatvorenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.50,
                          arcade.color.GREEN, 20,anchor_x= "center",font_name="Kenney Mini Square") #nakresli text Ovládanie s nastavenymi parametrami
+    
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         arcade.exit()
-
 
 def main(): #definicia hlavneho programu, nacitanie pohladu a spustenie hry
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Honey Run")
