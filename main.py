@@ -265,7 +265,7 @@ class MyGame(arcade.View):
             self.setup() #znovu nastavenie hry
             
         
-        if self.player_sprite.center_x >= 15000: #ak sa postavicka nachadza na konci mapy2 (cize na osi x je to 19000) tak:
+        if self.player_sprite.center_x >= 18560: #ak sa postavicka nachadza na konci mapy2 (cize na osi x je to 19000) tak:
             win_view = WinView()
             arcade.play_sound(self.win_sound), #spusti zvuk vyhra
             self.window.show_view(win_view) #zobrazime okno vyhry
@@ -311,6 +311,8 @@ class GameOverView(arcade.View):
                          arcade.color.GREEN, 30,anchor_x= "center",font_name="Kenney Mini Square") #nakresli text Ovládanie s nastavenymi parametrami
     
     def on_mouse_press(self, _x, _y, _button, _modifiers):
+        global SCORE
+        SCORE = 0
         game_view = MyGame()
         game_view.setup()
         self.window.show_view(game_view)
