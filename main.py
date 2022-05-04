@@ -305,7 +305,7 @@ class GameOverView(arcade.View):
                          arcade.color.GREEN, 35,anchor_x= "center",font_name="Kenney Mini Square")
         arcade.draw_text("(Klikni pre opetovne spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.6,
                          arcade.color.BLACK, 20,anchor_x= "center",font_name="Kenney Mini Square") 
-        arcade.draw_text(("Stlac ESC pre zatvorenie hry"), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.85,
+        arcade.draw_text(("(Stlac ESC pre zatvorenie hry)"), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.88,
                          arcade.color.BLACK, 20,anchor_x= "center",font_name="Kenney Mini Square")
     
     #definicia co sa stane ked klikneme na okno
@@ -340,7 +340,7 @@ class WinView(arcade.View):
                          arcade.color.GREEN, 35,anchor_x= "center",font_name="Kenney Mini Square")
         arcade.draw_text("(Klikni pre opetovne spustenie hry)", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.6,
                          arcade.color.BLACK, 20,anchor_x= "center",font_name="Kenney Mini Square") 
-        arcade.draw_text(("Stlac ESC pre zatvorenie hry"), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.85,
+        arcade.draw_text(("Stlac ESC pre zatvorenie hry"), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.88,
                          arcade.color.BLACK, 20,anchor_x= "center",font_name="Kenney Mini Square") 
 
     #definicia co sa stane pri kliknuti na okno
