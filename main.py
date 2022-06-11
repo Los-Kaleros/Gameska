@@ -40,6 +40,25 @@ MUSIC_VOLUME = 0.50 #hlasitost hudby
 
 SCORE = 0 #defaultne skore
 
+""""
+class View:
+    
+    Support different views/screens in a window.
+    
+
+    def __init__(self,
+                 window: Window = None):
+
+        if window is None:
+            self.window = arcade.get_window()
+        else:
+            self.window = window
+
+        self.key: Optional[int] = None
+        self.section_manager: SectionManager = SectionManager(self)
+"""
+
+
 #klasa kde sa nastavuje menu okno
 class MenuView(arcade.View):
     
@@ -88,7 +107,7 @@ class MyGame(arcade.View):
 
     def __init__(self):  #definicia co sa deje ako prve pri spusteni, tu vytvarame premenne väcsinou s nulovou / None hodnotou 
         
-        super().__init__() 
+        super().__init__() #dedenie z predoslych klas
         
         #nastavenie cesty pre spustenie tohto programu
         file_path = os.path.dirname(os.path.abspath(__file__))
