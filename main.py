@@ -83,7 +83,7 @@ class MenuView(arcade.View):
         self.window.set_window(instruction) 
 
 #klasa kde sa nastavuje instruktazne okno   
-class InstructionView(arcade.View): 
+class InstructionView(MenuView): 
 
     def on_show(self): #funkcia ktora sa spusti pri zobrazeni okna
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY) #nastavi farbu pozadia na tmavom modry
@@ -103,7 +103,7 @@ class InstructionView(arcade.View):
         self.window.show_view(game_view) #zobrazime okno MyGame
 
 #klasa kde sa nastavuje jadro hry
-class MyGame(arcade.View):
+class MyGame(InstructionView):
 
     def __init__(self):  #definicia co sa deje ako prve pri spusteni, tu vytvarame premenne väcsinou s nulovou / None hodnotou 
         
